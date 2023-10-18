@@ -2,4 +2,4 @@
 
 ## Setting up logging
 
-## Debugging with Bitwig
+## Debugging with a DAW

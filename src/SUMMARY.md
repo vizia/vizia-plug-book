@@ -1,4 +1,5 @@
 # Summary
 
-- [Setup](./setup.md)
-<!-- - [Logging and Debugging](./logging_debugging.md) -->
+- [Getting started](./getting_started.md)
+<!-- - [Logging and debugging](./logging_debugging.md) -->
+<!-- - [A simple gain plugin](./gain.md) -->

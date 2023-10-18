@@ -1,11 +1,10 @@
-# Chapter 1
-
+# Getting Started
 
 ## Creating a new project using the template
 
 First, we'll use [cookicutter](https://github.com/cookiecutter/cookiecutter) to create a new nih-plug project using the [nih-plug template](https://github.com/robbert-vdh/nih-plug-template).
 
-We can run the template generator using [pipx](https://pypa.github.io/pipx/) with the following in a directory of your choosing:
+We can run the template generator using [pipx](https://pypa.github.io/pipx/) with the following:
 
 ```
 pipx run cookiecutter gh:robbert-vdh/nih-plug-template
@@ -19,13 +18,13 @@ The CLI tool will prompt you to enter a name for the plugin, in this case we've 
 
 The template creates a nih-plug project without a GUI, so first we need to change the dependencies to include vizia into the project.
 
-Open the `Cargo.toml` and add the following dependency below the `nih_plug` dependency:
+Open the `Cargo.toml` file and add the following below the `nih_plug` dependency:
 
 ```toml
 nih_plug_vizia = { git = "https://github.com/robbert-vdh/nih-plug.git" }
 ```
 
-Note that the git URL is the same as the `nih_plug` dependency above it as the crates are from the same repository.
+Note that the git URL is the same as the `nih_plug` dependency above it as both crates are from the same repository.
 
 ## Adding a basic Vizia GUI
 
@@ -54,7 +53,7 @@ The `create_vizia_editor` function creates the vizia GUI window with a size dete
 
 Within the closure passed to the `create_vizia_editor` function is where we create the vizia GUI and add some controls. In this case we've added a simple label to begin with.
 
-To actually add the GUI to the plugin we need to add an `editor` method to the `Plugin` trait implementation of `ViziaPlug`. Add the following to `lib.rs` below the `process` method:
+To actually add the GUI to the plugin we need to add an `editor` method to the implementation of the`Plugin` trait for the `ViziaPlug` type. Add the following to the `lib.rs` file below the `process()` method:
 
 ```rust
 fn editor(&mut self, _async_executor: AsyncExecutor<Self>) -> Option<Box<dyn Editor>> {
@@ -62,7 +61,17 @@ fn editor(&mut self, _async_executor: AsyncExecutor<Self>) -> Option<Box<dyn Edi
 }
 ```
 
-And also include the `editor` module by adding `'mod editor;'` to the top of the `lib.rs` file above the `ViziaPlug` struct definition.
+We also need to include the `editor` module by adding `'mod editor;'` to the top of the `lib.rs` file above the `ViziaPlug` struct definition.
+
+## Building the plugin
+
+The plugin can be compiled with the following:
+
+```shell
+cargo xtask bundle vizia_plug --release
+```
+
+This will create both clap and vst versions of the plugin in the `target/bundled` directory. Simply move the `.vst` and/or `.clap` files to the appropriate folder(s) so that they can be found by the Digital Audio Workstation (DAW). 
 
 ## Running the plugin standalone
 
@@ -94,6 +103,6 @@ fn main() {
 
 For the above to work the `ViziaPlug` struct must be made public.
 
-Finally, use `cargo run` to build and run the standalone version of the plugin, which should then appear:
+Finally, use `cargo run` to build and run the standalone version of the plugin:
 
-<img src="./img/hello_gui.png" alt="" width="200"/>
+<img src="./img/hello_gui.png" alt="" width="300"/>
