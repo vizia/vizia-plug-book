@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Setup - Creating audio plugins with Vizia and Nih-Plug</title>
+        <title>Getting started - Creating audio plugins with Nih-Plug and Vizia</title>
 
 
         <!-- Custom HTML head -->
@@ -88,7 +88,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="setup.html" class="active"><strong aria-hidden="true">1.</strong> Setup</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="getting_started.html" class="active"><strong aria-hidden="true">1.</strong> Getting started</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -139,7 +139,7 @@
                         </button>
                     </div>
 
-                    <h1 class="menu-title">Creating audio plugins with Vizia and Nih-Plug</h1>
+                    <h1 class="menu-title">Creating audio plugins with Nih-Plug and Vizia</h1>
 
                     <div class="right-buttons">
                         <a href="print.html" title="Print this book" aria-label="Print this book">
@@ -171,20 +171,20 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="chapter-1"><a class="header" href="#chapter-1">Chapter 1</a></h1>
+                        <h1 id="getting-started"><a class="header" href="#getting-started">Getting Started</a></h1>
 <h2 id="creating-a-new-project-using-the-template"><a class="header" href="#creating-a-new-project-using-the-template">Creating a new project using the template</a></h2>
 <p>First, we'll use <a href="https://github.com/cookiecutter/cookiecutter">cookicutter</a> to create a new nih-plug project using the <a href="https://github.com/robbert-vdh/nih-plug-template">nih-plug template</a>.</p>
-<p>We can run the template generator using <a href="https://pypa.github.io/pipx/">pipx</a> with the following in a directory of your choosing:</p>
+<p>We can run the template generator using <a href="https://pypa.github.io/pipx/">pipx</a> with the following:</p>
 <pre><code>pipx run cookiecutter gh:robbert-vdh/nih-plug-template
 </code></pre>
 <p>The CLI tool will prompt you to enter a name for the plugin, in this case we've chosen 'vizia_plug', as well as some additional information. Once completed, the project structure should look like the following:</p>
 <img src="./img/project_directory.png" alt="" width="150"/>
 <h2 id="adding-the-vizia-dependency"><a class="header" href="#adding-the-vizia-dependency">Adding the Vizia dependency</a></h2>
 <p>The template creates a nih-plug project without a GUI, so first we need to change the dependencies to include vizia into the project.</p>
-<p>Open the <code>Cargo.toml</code> and add the following dependency below the <code>nih_plug</code> dependency:</p>
+<p>Open the <code>Cargo.toml</code> file and add the following below the <code>nih_plug</code> dependency:</p>
 <pre><code class="language-toml">nih_plug_vizia = { git = &quot;https://github.com/robbert-vdh/nih-plug.git&quot; }
 </code></pre>
-<p>Note that the git URL is the same as the <code>nih_plug</code> dependency above it as the crates are from the same repository.</p>
+<p>Note that the git URL is the same as the <code>nih_plug</code> dependency above it as both crates are from the same repository.</p>
 <h2 id="adding-a-basic-vizia-gui"><a class="header" href="#adding-a-basic-vizia-gui">Adding a basic Vizia GUI</a></h2>
 <p>Now we'll setup a simple GUI for our plugin. Add an <code>editor.rs</code> file to the <code>src</code> directory with the following content:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -208,14 +208,19 @@ pub(crate) fn create(_params: Arc&lt;ViziaPlugParams&gt;) -&gt; Option&lt;Box&lt
 <span class="boring">}</span></code></pre></pre>
 <p>The <code>create_vizia_editor</code> function creates the vizia GUI window with a size determined by the <code>ViziaState</code>. For now this state is hard-coded but later we'll move it to the plugin parameters so that the window state is remembered between successive openings of the window.</p>
 <p>Within the closure passed to the <code>create_vizia_editor</code> function is where we create the vizia GUI and add some controls. In this case we've added a simple label to begin with.</p>
-<p>To actually add the GUI to the plugin we need to add an <code>editor</code> method to the <code>Plugin</code> trait implementation of <code>ViziaPlug</code>. Add the following to <code>lib.rs</code> below the <code>process</code> method:</p>
+<p>To actually add the GUI to the plugin we need to add an <code>editor</code> method to the implementation of the<code>Plugin</code> trait for the <code>ViziaPlug</code> type. Add the following to the <code>lib.rs</code> file below the <code>process()</code> method:</p>
 <pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn editor(&amp;mut self, _async_executor: AsyncExecutor&lt;Self&gt;) -&gt; Option&lt;Box&lt;dyn Editor&gt;&gt; {
         editor::create(self.params.clone())
 }
 <span class="boring">}</span></code></pre></pre>
-<p>And also include the <code>editor</code> module by adding <code>'mod editor;'</code> to the top of the <code>lib.rs</code> file above the <code>ViziaPlug</code> struct definition.</p>
+<p>We also need to include the <code>editor</code> module by adding <code>'mod editor;'</code> to the top of the <code>lib.rs</code> file above the <code>ViziaPlug</code> struct definition.</p>
+<h2 id="building-the-plugin"><a class="header" href="#building-the-plugin">Building the plugin</a></h2>
+<p>The plugin can be compiled with the following:</p>
+<pre><code class="language-shell">cargo xtask bundle vizia_plug --release
+</code></pre>
+<p>This will create both clap and vst versions of the plugin in the <code>target/bundled</code> directory. Simply move the <code>.vst</code> and/or <code>.clap</code> files to the appropriate folder(s) so that they can be found by the Digital Audio Workstation (DAW). </p>
 <h2 id="running-the-plugin-standalone"><a class="header" href="#running-the-plugin-standalone">Running the plugin standalone</a></h2>
 <p>For testing purposes it can be useful to run the plugin standalone, which does not require a host.</p>
 <p>To run the plugin standalone, first add the <code>standalone</code> feature to the <code>nih_plug</code> dependency in the <code>Cargo.toml</code> file:</p>
@@ -233,8 +238,8 @@ fn main() {
     nih_export_standalone::&lt;ViziaPlug&gt;();
 }</code></pre></pre>
 <p>For the above to work the <code>ViziaPlug</code> struct must be made public.</p>
-<p>Finally, use <code>cargo run</code> to build and run the standalone version of the plugin, which should then appear:</p>
-<img src="./img/hello_gui.png" alt="" width="200"/>
+<p>Finally, use <code>cargo run</code> to build and run the standalone version of the plugin:</p>
+<img src="./img/hello_gui.png" alt="" width="300"/>
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
