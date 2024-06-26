@@ -49,6 +49,8 @@ pub(crate) fn create(_params: Arc<ViziaPlugParams>) -> Option<Box<dyn Editor>> {
 }
 ```
 
+*Make sure to change instances of `ViziaPlug` to the name of your plugin.*
+
 The `create_vizia_editor` function creates the vizia GUI window with a size determined by the `ViziaState`. For now this state is hard-coded but later we'll move it to the plugin parameters so that the window state is remembered between successive openings of the window.
 
 Within the closure passed to the `create_vizia_editor` function is where we create the vizia GUI and add some controls. In this case we've added a simple label to begin with.
