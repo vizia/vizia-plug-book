@@ -90,7 +90,9 @@
             <div class="sidebar-scrollbox">
                 <ol class="chapter"><li class="chapter-item expanded "><a href="getting_started.html" class="active"><strong aria-hidden="true">1.</strong> Getting started</a></li></ol>
             </div>
-            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
         </nav>
 
         <!-- Track and set sidebar scroll position -->
@@ -182,7 +184,7 @@
 <h2 id="adding-the-vizia-dependency"><a class="header" href="#adding-the-vizia-dependency">Adding the Vizia dependency</a></h2>
 <p>The template creates a nih-plug project without a GUI, so first we need to change the dependencies to include vizia into the project.</p>
 <p>Open the <code>Cargo.toml</code> file and add the following below the <code>nih_plug</code> dependency:</p>
-<pre><code class="language-toml">nih_plug_vizia = { git = &quot;https://github.com/robbert-vdh/nih-plug.git&quot; }
+<pre><code class="language-toml">nih_plug_vizia = { git = "https://github.com/robbert-vdh/nih-plug.git" }
 </code></pre>
 <p>Note that the git URL is the same as the <code>nih_plug</code> dependency above it as both crates are from the same repository.</p>
 <h2 id="adding-a-basic-vizia-gui"><a class="header" href="#adding-a-basic-vizia-gui">Adding a basic Vizia GUI</a></h2>
@@ -201,11 +203,12 @@ pub(crate) fn create(_params: Arc&lt;ViziaPlugParams&gt;) -&gt; Option&lt;Box&lt
         ViziaState::new(|| (200, 150)),
         ViziaTheming::Custom,
         move |cx, _| {
-            Label::new(cx, &quot;Hello Plugin GUI&quot;);
+            Label::new(cx, "Hello Plugin GUI");
         },
     )
 }
 <span class="boring">}</span></code></pre></pre>
+<p><em>Make sure to change instances of <code>ViziaPlug</code> to the name of your plugin.</em></p>
 <p>The <code>create_vizia_editor</code> function creates the vizia GUI window with a size determined by the <code>ViziaState</code>. For now this state is hard-coded but later we'll move it to the plugin parameters so that the window state is remembered between successive openings of the window.</p>
 <p>Within the closure passed to the <code>create_vizia_editor</code> function is where we create the vizia GUI and add some controls. In this case we've added a simple label to begin with.</p>
 <p>To actually add the GUI to the plugin we need to add an <code>editor</code> method to the implementation of the<code>Plugin</code> trait for the <code>ViziaPlug</code> type. Add the following to the <code>lib.rs</code> file below the <code>process()</code> method:</p>
@@ -220,14 +223,14 @@ pub(crate) fn create(_params: Arc&lt;ViziaPlugParams&gt;) -&gt; Option&lt;Box&lt
 <p>The plugin can be compiled with the following:</p>
 <pre><code class="language-shell">cargo xtask bundle vizia_plug --release
 </code></pre>
-<p>This will create both clap and vst versions of the plugin in the <code>target/bundled</code> directory. Simply move the <code>.vst</code> and/or <code>.clap</code> files to the appropriate folder(s) so that they can be found by the Digital Audio Workstation (DAW). </p>
+<p>This will create both clap and vst versions of the plugin in the <code>target/bundled</code> directory. Simply move the <code>.vst</code> and/or <code>.clap</code> files to the appropriate folder(s) so that they can be found by the Digital Audio Workstation (DAW).</p>
 <h2 id="running-the-plugin-standalone"><a class="header" href="#running-the-plugin-standalone">Running the plugin standalone</a></h2>
 <p>For testing purposes it can be useful to run the plugin standalone, which does not require a host.</p>
 <p>To run the plugin standalone, first add the <code>standalone</code> feature to the <code>nih_plug</code> dependency in the <code>Cargo.toml</code> file:</p>
-<pre><code class="language-toml">nih_plug = { git = &quot;https://github.com/robbert-vdh/nih-plug.git&quot;, features = [&quot;assert_process_allocs&quot;, &quot;standalone&quot;] }
+<pre><code class="language-toml">nih_plug = { git = "https://github.com/robbert-vdh/nih-plug.git", features = ["assert_process_allocs", "standalone"] }
 </code></pre>
-<p>Next, also in the <code>Cargo.toml</code> file, change the <code>crate-type</code> to include <code>&quot;lib&quot;</code>, like so:</p>
-<pre><code class="language-toml">crate-type = [&quot;cdylib&quot;, &quot;lib&quot;]
+<p>Next, also in the <code>Cargo.toml</code> file, change the <code>crate-type</code> to include <code>"lib"</code>, like so:</p>
+<pre><code class="language-toml">crate-type = ["cdylib", "lib"]
 </code></pre>
 <p>Then, add a <code>main.rs</code> file to the <code>src</code> directory with the following:</p>
 <pre><pre class="playground"><code class="language-rust">use nih_plug::prelude::*;
@@ -240,6 +243,7 @@ fn main() {
 <p>For the above to work the <code>ViziaPlug</code> struct must be made public.</p>
 <p>Finally, use <code>cargo run</code> to build and run the standalone version of the plugin:</p>
 <img src="./img/hello_gui.png" alt="" width="300"/>
+
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
